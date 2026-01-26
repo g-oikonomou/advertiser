@@ -7,22 +7,9 @@
 Overview
 ********
 
-A simple application demonstrating combined Bluetooth LE Broadcaster & Observer
+A simple application demonstrating Bluetooth LE Broadcaster
 role functionality. The application will periodically send out
-advertising packets with a manufacturer data element. The content of the
-data is a single byte indicating how many advertising packets the device
-has received (the number will roll back to 0 after 255).
+advertising packets with a manufacturer data element.
 
-Requirements
-************
-
-* BlueZ running on the host, or
-* A board with Bluetooth LE support
-
-Building and Running
-********************
-
-This sample can be found under :zephyr_file:`samples/bluetooth/scan_adv` in the
-Zephyr tree.
-
-See :zephyr:code-sample-category:`bluetooth` samples for details.
+This is used for the IoT Systems Prototyping lab exercise (EEMEM0018)
+at the University of Bristol, academic year 2025/26.
