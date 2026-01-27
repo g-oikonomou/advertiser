@@ -42,8 +42,6 @@ static adv_mfg_data_t adv_mfg_data = {
  * We include the device name and the manufacturer specific data (which includes specific company ID and temperature sensor value).
  */
 static const struct bt_data ad[] = {
-	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
-	BT_DATA(BT_DATA_MANUFACTURER_DATA, (uint8_t *)&adv_mfg_data, sizeof(adv_mfg_data)),
 };
 
 /**
