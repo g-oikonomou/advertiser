@@ -25,7 +25,6 @@
 struct adv_mfg_data {
 	uint16_t company_id;
 	int16_t temperature;
-	uint8_t group_id;
 } __packed;
 typedef struct adv_mfg_data adv_mfg_data_t;
 
