@@ -66,9 +66,6 @@ int main(void)
 {
 	int err;
 
-	float temperature = 25.1f;
-	bool increasing = true;
-
 	printk("Starting BLE Advertiser Demo\n");
 
 	/* Initialize the Bluetooth Subsystem */
