@@ -28,6 +28,12 @@ struct adv_mfg_data {
 } __packed;
 typedef struct adv_mfg_data adv_mfg_data_t;
 
+// Initialise data to be advertised
+static adv_mfg_data_t adv_mfg_data = {
+	.company_id = COMPANY_ID,
+	.temperature = 0,
+};
+
 /**
  * Our advertisement data structure.
  * 
@@ -35,6 +41,7 @@ typedef struct adv_mfg_data adv_mfg_data_t;
  */
 static const struct bt_data ad[] = {
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
+	BT_DATA(BT_DATA_MANUFACTURER_DATA, (uint8_t *)&adv_mfg_data, sizeof(adv_mfg_data)),
 };
 
 /**
