@@ -69,7 +69,7 @@ int main(void)
 	float temperature = 25.1f;
 	bool increasing = true;
 
-	printk("Starting Scanner/Advertiser Demo\n");
+	printk("Starting BLE Advertiser Demo\n");
 
 	/* Initialize the Bluetooth Subsystem */
 	err = bt_enable(NULL);
