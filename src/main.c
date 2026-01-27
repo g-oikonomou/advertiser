@@ -70,6 +70,14 @@ int main(void)
 
 	printk("Element 0: T=0x%02x, L=0x%02x, V='%s'\n", ad[0].type, ad[0].data_len, ad[0].data);
 
+	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), NULL, 0);
+	if (err)
+	{
+		printk("Advertising failed to start (err %d)\n", err);
+		return 0;
+	}
+
+	printk("BLE Advertiser Ready\n");
 
 	return 0;
 }
