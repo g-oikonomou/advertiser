@@ -68,6 +68,8 @@ int main(void)
 
 	printk("Bluetooth initialized\n");
 
+	printk("Element 0: T=0x%02x, L=0x%02x, V='%s'\n", ad[0].type, ad[0].data_len, ad[0].data);
+
 
 	return 0;
 }
