@@ -29,13 +29,6 @@ struct adv_mfg_data {
 } __packed;
 typedef struct adv_mfg_data adv_mfg_data_t;
 
-// Initialise data to be advertised
-static adv_mfg_data_t adv_mfg_data = {
-	.company_id = COMPANY_ID,
-	.temperature = 0,
-	.group_id = 99, // Default silly group ID 
-};
-
 /**
  * Our advertisement data structure.
  * 
