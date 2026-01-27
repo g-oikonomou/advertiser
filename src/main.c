@@ -87,41 +87,6 @@ int main(void)
 		return 0;
 	}
 
-	while(1)
-	{
-		// Simulate temperature change
-		if (increasing)
-		{
-			temperature += 0.2f;
-			if (temperature >= 30.0f)
-			{
-				increasing = false;
-			}
-		}
-		else
-		{
-			temperature -= 0.2f;
-			if (temperature <= 20.0f)
-			{
-				increasing = true;
-			}
-		}
-
-		int16_t temp_int16 = (int16_t)(temperature * 100);
-
-		// Update the temperature in the advertisement data
-		adv_mfg_data.temperature = sys_cpu_to_le16(temp_int16);
-
-		// Update your group ID here
-		adv_mfg_data.group_id = 2; // Example group ID
-
-		err = bt_le_adv_update_data(ad, ARRAY_SIZE(ad), NULL, 0);
-		if (err) {
-			printk("Failed to update advertising data (err %d)\n", err);
-		}
-
-		k_sleep(K_MSEC(500));
-	} 
 
 	return 0;
 }
