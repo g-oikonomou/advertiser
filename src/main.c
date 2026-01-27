@@ -68,14 +68,6 @@ int main(void)
 
 	printk("Bluetooth initialized\n");
 
-	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), NULL, 0);
-	if (err)
-	{
-		printk("Advertising failed to start (err %d)\n", err);
-		return 0;
-	}
-
-	printk("BLE Advertiser Ready\n");
 
 	return 0;
 }
