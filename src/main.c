@@ -87,6 +87,7 @@ int main(void)
 		return 0;
 	}
 
+	printk("BLE Advertiser Ready\n");
 
 	return 0;
 }
