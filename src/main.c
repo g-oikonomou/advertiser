@@ -34,6 +34,7 @@ typedef struct adv_mfg_data adv_mfg_data_t;
  * We include the device name and the manufacturer specific data (which includes specific company ID and temperature sensor value).
  */
 static const struct bt_data ad[] = {
+	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
 
 /**
