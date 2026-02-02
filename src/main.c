@@ -254,6 +254,10 @@ int main(void)
 	}
 
 	/* Start the ADC periodic sampling worker */
+	printk("Initialising ADC sampling, period=%d ms\n", ADC_SAMPLING_PERIOD_MS);
+	k_work_init(&sample_work, sample_work_handler);
+	k_timer_init(&sample_timer, sample_timer_handler, NULL);
+	k_timer_start(&sample_timer, K_MSEC(ADC_SAMPLING_PERIOD_MS), K_MSEC(ADC_SAMPLING_PERIOD_MS));
 
 	/* Initialize the Bluetooth Subsystem */
 
