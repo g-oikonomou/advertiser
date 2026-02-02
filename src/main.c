@@ -260,6 +260,25 @@ int main(void)
 	k_timer_start(&sample_timer, K_MSEC(ADC_SAMPLING_PERIOD_MS), K_MSEC(ADC_SAMPLING_PERIOD_MS));
 
 	/* Initialize the Bluetooth Subsystem */
+	err = bt_enable(NULL);
+	if (err) {
+		printk("Bluetooth init failed (err %d)\n", err);
+		return 0;
+	}
+
+	printk("Bluetooth initialized\n");
+	printk("Element 0: T=0x%02x, L=0x%02x, V='%s'\n", ad[0].type, ad[0].data_len, ad[0].data);
+	printk("Element 1: T=0x%02x, L=0x%02x, V='C=0x%04x, T=%d'\n", ad[1].type, ad[1].data_len,
+		((adv_mfg_data_t *)ad[1].data)->company_id, ((adv_mfg_data_t *)ad[1].data)->temperature);
+
+	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), NULL, 0);
+	if (err)
+	{
+		printk("Advertising failed to start (err %d)\n", err);
+		return 0;
+	}
+
+	printk("BLE Advertiser Ready\n");
 
 	return 0;
 }
