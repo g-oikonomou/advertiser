@@ -43,6 +43,9 @@ static struct k_work sample_work;
  * - Define the LED Node alias
  * - Define the gpio device tree spec
  */
+#define LED0_NODE DT_ALIAS(led0)
+
+static const struct gpio_dt_spec led0 = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
 /******************* BLE Configuration and Data Structures ********************/
 /**
  * Use this block to define BLE functionality
