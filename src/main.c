@@ -55,6 +55,57 @@ static const struct gpio_dt_spec led0 = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
  * - Define the format of your payload
  * - Define the advertising interval and other BLE parameters
  */
+/* BLE device name, configuirable in prj.conf */
+#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
+
+/* This is the company ID that will be in the Manufacturer Specific Data */
+#define COMPANY_ID 0x0059 /* Nordic Semiconductor ASA */
+#define GROUP_ID 0xFF
+
+/* Define the format of the Manufacturer Specific advertisement element */
+struct adv_mfg_data {
+	uint16_t company_id;
+	uint8_t group_id;
+	int16_t temperature;
+	int32_t voltage;
+} __packed;
+typedef struct adv_mfg_data adv_mfg_data_t;
+
+/* Initialise the Manufacturer Specific Data advertisement element */
+static adv_mfg_data_t adv_mfg_data = {
+	.company_id = COMPANY_ID,
+	.group_id = GROUP_ID,
+	.temperature = 0,
+	.voltage = 0,
+};
+
+/**
+ * Our advertisement data structure.
+ * 
+ * - The first element (AD0) is of type 'Complete Local Name' (x09)
+ * - The second element (AD1) is Manufacturer Specific Data (0xFF)
+ *   The sub-format of this field is specified in struct adv_mfg_data
+ */
+static const struct bt_data ad[] = {
+	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
+	BT_DATA(BT_DATA_MANUFACTURER_DATA, (uint8_t *)&adv_mfg_data, sizeof(adv_mfg_data)),
+};
+
+/**
+ * Define advertising interval (in units of 0.625 ms)
+ * 
+ * For example, 0x1F40 = 8000 * 0.625 ms = 5000 ms (5s)
+ */
+#define BT_ADV_INTERVAL 0x1F40
+
+/* BLE advertisement parameters */
+static const struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
+	BT_LE_ADV_OPT_NONE,
+	BT_ADV_INTERVAL,
+	BT_ADV_INTERVAL,
+	NULL
+);
 /******************************************************************************/
 /**
  * Use this block to define the functions needed to read the sensor
