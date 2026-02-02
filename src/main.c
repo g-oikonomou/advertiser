@@ -203,12 +203,36 @@ static int read_sensor(float *out_temp_c, int32_t *out_voltage)
 /* Runs in system workqueue thread context (safe for adc_read) */
 static void sample_work_handler(struct k_work *work)
 {
+	int err = 0;
+	float temperature;
+	int32_t voltage;
+
 	ARG_UNUSED(work);
+
+	/* Update the ADC reading. If successful, update our BLE payload */
+	if(read_sensor(&temperature, &voltage) == 0) {
+		/* 
+		 * Our temperature is a float.
+		 * The BLE packet expects temperature as a 2-byte signed integer in big-endian order
+		 * The BLE packet expects voltage as a 4-byte signed integer in big-endian order
+		 */
+		adv_mfg_data.temperature = sys_cpu_to_be16((int16_t)temperature);
+		adv_mfg_data.voltage = sys_cpu_to_be32(voltage);
+
+		printk("Update BLE payload: C=%u, T=0x%04x (%d), V=0x%08x (%d)\n", adv_mfg_data.company_id, 
+			adv_mfg_data.temperature, (int16_t)temperature, adv_mfg_data.voltage, voltage);
+
+		err = bt_le_adv_update_data(ad, ARRAY_SIZE(ad), NULL, 0);
+		if (err) {
+			printk("Failed to update advertising data (err %d)\n", err);
+		}
+	}
 }
 /* Runs in timer context: do NOT call adc_read here */
 static void sample_timer_handler(struct k_timer *timer)
 {
 	ARG_UNUSED(timer);
+	(void)k_work_submit(&sample_work);
 }
 /******************************************************************************/
 int main(void)
