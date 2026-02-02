@@ -242,6 +242,16 @@ int main(void)
 	printk("Starting LED/ADC/BLE Advertiser Demo\n");
 
 	/* Initialize LED0 */
+	if (!gpio_is_ready_dt(&led0)) {
+		printk("LED device not ready\n");
+		return 0;
+	}
+
+	err = gpio_pin_configure_dt(&led0, GPIO_OUTPUT_INACTIVE);
+	if (err < 0) {
+		printk("LED configure failed (err=%d)\n", err);
+		return 0;
+	}
 
 	/* Start the ADC periodic sampling worker */
 
