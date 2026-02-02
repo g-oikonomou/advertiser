@@ -75,7 +75,6 @@ int main(void)
 	}
 
 	printk("Bluetooth initialized\n");
-
 	printk("Element 0: T=0x%02x, L=0x%02x, V='%s'\n", ad[0].type, ad[0].data_len, ad[0].data);
 	printk("Element 1: T=0x%02x, L=0x%02x, V='C=0x%04x, T=%d'\n", ad[1].type, ad[1].data_len,
 		((adv_mfg_data_t *)ad[1].data)->company_id, ((adv_mfg_data_t *)ad[1].data)->temperature);
