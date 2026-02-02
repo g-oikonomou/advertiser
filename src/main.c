@@ -26,6 +26,17 @@
  * - Define the sensor reading worker
  * - Define any other ADC-/Sensor-related variables that may be needed
  */
+#define ADC_SAMPLING_PERIOD_MS        5000
+
+/* ADC channel from devicetree node */
+static const struct adc_dt_spec adc_channel = ADC_DT_SPEC_GET(DT_PATH(zephyr_user));
+
+static int16_t adc_buf;
+static bool adc_setup_done;
+
+/* ADC peridic sampling worker*/
+static struct k_timer sample_timer;
+static struct k_work sample_work;
 /******************* LED Configuration and Data Structures ********************/
 /**
  * Use this block to configure the LED
