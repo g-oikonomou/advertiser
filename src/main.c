@@ -123,6 +123,81 @@ static const struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
  */
 static int read_sensor(float *out_temp_c, int32_t *out_voltage)
 {
+	int err;
+
+	/*
+	 * Blink LED while taking a reading. If this function returns and the
+	 * LED is still on then the function returned prematurely with an error
+	 */
+	int led_err;
+	led_err = gpio_pin_set_dt(&led0, 1);
+	if (led_err < 0) {
+		printk("LED set failed (err=%d)\n", led_err);
+	}
+
+	if (!adc_is_ready_dt(&adc_channel)) {
+		printk("ADC %s is not ready\n", adc_channel.dev->name);
+		return -EIO;
+	}
+
+	/* Do ADC channel setup once */
+	if (!adc_setup_done) {
+		err = adc_channel_setup_dt(&adc_channel);
+		if (err < 0) {
+			printk("ADC channel setup failed (err=%d)\n", err);
+			return err;
+		}
+		adc_setup_done = true;
+
+		printk("ADC ready: dev=%s, channel_id=%d\n",
+		       adc_channel.dev->name, adc_channel.channel_id);
+	}
+
+	struct adc_sequence sequence = {
+		.buffer = &adc_buf,
+		.buffer_size = sizeof(adc_buf),
+	};
+
+	err = adc_sequence_init_dt(&adc_channel, &sequence);
+	if (err < 0) {
+		printk("ADC sequence init failed (err=%d)\n", err);
+		return err;
+	}
+
+	err = adc_read(adc_channel.dev, &sequence);
+	if (err < 0) {
+		printk("ADC read failed (err=%d)\n", err);
+		return err;
+	}
+
+	const int16_t raw = adc_buf;
+	int32_t mv = adc_buf;
+
+	err = adc_raw_to_millivolts_dt(&adc_channel, &mv);
+	if (err < 0) {
+		printk("raw=%d (mv conversion failed err=%d)\n", raw, err);
+		return err;
+	}
+
+	/* LM335: 10 mV/K => T(K)=mV/10 => T(C)=mV/10 - 273.15 */
+	float temp_c = (mv / 10.0f) - 273.15f;
+
+	/* Explicit promotion to double to silence compiler warning */
+	printk("ADC: raw=%d, voltage=%d mV, Temp=%.2f C\n", raw, mv, (double)temp_c);
+
+	if (out_temp_c) {
+		*out_temp_c = temp_c;
+	}
+
+	if (out_voltage) {
+		*out_voltage = mv;
+	}
+
+	led_err = gpio_pin_set_dt(&led0, 0);
+	if (led_err < 0) {
+		printk("LED set failed (err=%d)\n", led_err);
+	}
+
 	return 0;
 }
 /* Runs in system workqueue thread context (safe for adc_read) */
