@@ -6,7 +6,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-
+/******************************************************************************/
 #include <zephyr/types.h>
 #include <stddef.h>
 #include <zephyr/sys/printk.h>
@@ -14,28 +14,29 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/sys/byteorder.h>
 
-// This is our device name from prj.conf
+/******************* BLE Configuration and Data Structures ********************/
+/* BLE device name, configuirable in prj.conf */
 #define DEVICE_NAME CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
-// This is the company ID that will be in the Manufacturer Specific Data
+/* This is the company ID that will be in the Manufacturer Specific Data */
 #define COMPANY_ID 0x0059 // Nordic Semiconductor ASA
 
-// Define Manufacturer Specific Data structure
+/* Define Manufacturer Specific Data structure */
 struct adv_mfg_data {
 	uint16_t company_id;
 	int16_t temperature;
 } __packed;
 typedef struct adv_mfg_data adv_mfg_data_t;
 
-// Initialise data to be advertised
+/* Initialise Manufacturer Specific Data */
 static adv_mfg_data_t adv_mfg_data = {
 	.company_id = COMPANY_ID,
 	.temperature = 0,
 };
 
 /**
- * Our advertisement data structure.
+ * Our advertisement data structure (Manufacturer Specific Data payload).
  * 
  * We include the device name and the manufacturer specific data (which includes specific company ID and temperature sensor value).
  */
@@ -51,7 +52,7 @@ static const struct bt_data ad[] = {
  */
 #define BT_ADV_INTERVAL 0x1F40
 
-// Now it's time for advertisement parameters
+/* BLE advertisement parameters */
 static const struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
 	BT_LE_ADV_OPT_NONE,
 	BT_ADV_INTERVAL,
