@@ -6,67 +6,82 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-
+/******************************************************************************/
 #include <zephyr/types.h>
 #include <stddef.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/sys/util.h>
-#include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/sys/byteorder.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/kernel.h>
 
-// This is our device name from prj.conf
-#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
-
-// This is the company ID that will be in the Manufacturer Specific Data
-#define COMPANY_ID 0x0059 // Nordic Semiconductor ASA
-
-// Define Manufacturer Specific Data structure
-struct adv_mfg_data {
-	uint16_t company_id;
-	int16_t temperature;
-} __packed;
-typedef struct adv_mfg_data adv_mfg_data_t;
-
+#include <zephyr/devicetree.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/drivers/adc.h>
+/******************* ADC Configuration and Data Structures ********************/
 /**
- * Our advertisement data structure.
- * 
- * We include the device name and the manufacturer specific data (which includes specific company ID and temperature sensor value).
+ * Use this block to configure the ADC / sensor reading worker
+ * - Define the sampling period (30 sec)
+ * - Define the ADC channel from device tree
+ * - Define the sensor reading worker
+ * - Define any other ADC-/Sensor-related variables that may be needed
  */
-static const struct bt_data ad[] = {
-};
-
+/******************* LED Configuration and Data Structures ********************/
 /**
- * Define advertising interval (in units of 0.625 ms)
- * 
- * For example, 0x1F40 = 8000 * 0.625 ms = 5000 ms (5s)
+ * Use this block to configure the LED
+ * - Define the LED Node alias
+ * - Define the gpio device tree spec
  */
-#define BT_ADV_INTERVAL 0x1F40
-
-// Now it's time for advertisement parameters
-static const struct bt_le_adv_param *adv_param = BT_LE_ADV_PARAM(
-	BT_LE_ADV_OPT_NONE,
-	BT_ADV_INTERVAL,
-	BT_ADV_INTERVAL,
-	NULL
-);
-
-
+/******************* BLE Configuration and Data Structures ********************/
+/**
+ * Use this block to define BLE functionality
+ * - Define the device name, configurable from prj.conf
+ * - Define the COMPANY ID for the Manufacturer Specific Data element
+ * - Define the format of the MSD payload, and a variable to hold it
+ * - Define the format of your payload
+ * - Define the advertising interval and other BLE parameters
+ */
+/******************************************************************************/
+/**
+ * Use this block to define the functions needed to read the sensor
+ * - A function that reads the sensor
+ *   The function must turn the LED on at the start, and turn it back off if
+ *   it ends successfully. In this scenario, the user will see a quick blink.
+ *   If an error occurs, the LED will remain on.
+ * 
+ * - The sensor reading worker.
+ *   When the worker has read the sensor successfully, it must update the
+ *   correct part of the BLE advertisement payload.
+ */
+/* 
+ * Read ADC once, convert to temperature and populate the arguments
+ */
+static int read_sensor(float *out_temp_c, int32_t *out_voltage)
+{
+	return 0;
+}
+/* Runs in system workqueue thread context (safe for adc_read) */
+static void sample_work_handler(struct k_work *work)
+{
+	ARG_UNUSED(work);
+}
+/* Runs in timer context: do NOT call adc_read here */
+static void sample_timer_handler(struct k_timer *timer)
+{
+	ARG_UNUSED(timer);
+}
+/******************************************************************************/
 int main(void)
 {
 	int err;
 
-	printk("Starting BLE Advertiser Demo\n");
+	printk("Starting LED/ADC/BLE Advertiser Demo\n");
+
+	/* Initialize LED0 */
+
+	/* Start the ADC periodic sampling worker */
 
 	/* Initialize the Bluetooth Subsystem */
-	err = bt_enable(NULL);
-	if (err) {
-		printk("Bluetooth init failed (err %d)\n", err);
-		return 0;
-	}
-
-	printk("Bluetooth initialized\n");
-
 
 	return 0;
 }
